@@ -10,7 +10,7 @@ public class AprioriMiner {
 	
 	public static void main(String[] args) {
 
-		double minSupport = 2, minConfidence = 5;
+		double minSupport = 0.20, minConfidence = 0.50;
                 
                 
 		String inputCsv = "C:\\Users\\Shivam Tiwari\\Documents\\NetBeansProjects\\Apriori-Miner-Association-Rules\\Project-SourceCode\\src\\INTEGRATED-DATASET.csv";
@@ -237,11 +237,15 @@ public class AprioriMiner {
                 
 
                 bw.write("Minimum Support : " + minSupport);
-                bw.write("\n");
+                bw.newLine();
                 bw.write("Minimum Confidence : " + minConfidence);
-                bw.write("\n");
+                bw.newLine();
+                bw.newLine();
                 
-                bw.write("Large ItemSets (decreasing order of support) :\n\n");
+                bw.write("Large ItemSets (decreasing order of support) : ");
+                bw.newLine();
+                bw.newLine();
+                
                 Iterator<Map.Entry<Set<String>, Integer>> finalItemSetIterator = sortedSupportMap.entrySet().iterator();
                 while(finalItemSetIterator.hasNext())
                 {
@@ -250,11 +254,19 @@ public class AprioriMiner {
                         Integer value = entry.getValue();
                         double support = (value / (double)transactionList.size()) * 100.0;
                         bw.write(Arrays.toString(key.toArray()) + ", " + support + "%\n");
+                        bw.newLine();
                 }
-                bw.write("\n\nHigh-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) :\n\n");
+                bw.newLine();
+                bw.newLine();
+                
+                bw.write("High-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) : ");
+                bw.newLine();
+                bw.newLine();
+                
                 for(int i = 0; i < ruleList.size(); i ++)
                 {
                         bw.write(ruleList.get(i) + "\n");
+                        bw.newLine();
                 }
             }
 		}

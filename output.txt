@@ -1,8 +1,35 @@
-Minimum Support : 2.0
-Minimum Confidence : 5.0
-Large ItemSets (decreasing order of support) :
+Minimum Support : 0.2
+Minimum Confidence : 0.5
+
+Large ItemSets (decreasing order of support) : 
+
+[Closed], 67.97300089537846%
+
+[Cleaning crew dispatched.  Property cleaned.], 62.56629244438322%
+
+[Cleaning crew dispatched.  Property cleaned., Closed], 61.34720022040086%
+
+[Open], 30.794131827260827%
+
+[MANHATTAN], 28.576348233349403%
+
+[BROOKLYN], 27.02665472828707%
+
+[QUEENS], 23.562228803636614%
 
 
 
-High-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) :
+High-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) : 
+
+[Closed] ==> [Cleaning crew dispatched.  Property cleaned.] (Conf: 90.25230519809504%, Supp: 61.34720022040086%)
+
+[MANHATTAN] ==> [Closed] (Conf: 81.46541335261509%, Supp: 23.27984020938081%)
+
+[BROOKLYN] ==> [Closed] (Conf: 68.96024464831805%, Supp: 18.63764722088298%)
+
+[BROOKLYN] ==> [Cleaning crew dispatched.  Property cleaned.] (Conf: 68.2466870540265%, Supp: 18.444796473586337%)
+
+[QUEENS] ==> [Closed] (Conf: 59.719380298158434%, Supp: 14.071217025965977%)
+
+[QUEENS] ==> [Cleaning crew dispatched.  Property cleaned.] (Conf: 59.397836889798306%, Supp: 13.995454232385152%)
 
