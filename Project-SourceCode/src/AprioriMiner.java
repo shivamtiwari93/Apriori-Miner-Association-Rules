@@ -1,26 +1,12 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class AprioriMiner {
 
-	static List<List<String>> transactionList = new ArrayList<List<String>>();
-	static List<Rule> ruleList = new ArrayList<Rule>();
-	static List<Set<String>> largeItemList = new ArrayList<Set<String>>();
+	static List<List<String>> transactionList = new ArrayList<>();
+	static List<Rule> ruleList = new ArrayList<>();
+	static List<Set<String>> largeItemList = new ArrayList<>();
 	
 	public static void main(String[] args) {
 
@@ -35,44 +21,44 @@ public class AprioriMiner {
 		
 		
 		File inputFile = new File(inputCsv);
-		List<Set<Set<String>>> largeItemSetList = new ArrayList<Set<Set<String>>>();
+		List<Set<Set<String>>> largeItemSetList = new ArrayList<>();
 		
 		//Getting individual Items and their counts
-		Set<String> itemSet = new HashSet<String>();
-		Map<String,Integer> itemSupportMap = new HashMap<String,Integer>();
-		Map<Set<String>,Integer> largeItemSupportMap = new HashMap<Set<String>,Integer>();
+		Set<String> itemSet = new HashSet<>();
+		Map<String,Integer> itemSupportMap = new HashMap<>();
+		Map<Set<String>,Integer> largeItemSupportMap = new HashMap<>();
 		ValueComparator bvc =  new ValueComparator(largeItemSupportMap);
-		TreeMap<Set<String>, Integer> sortedSupportMap = new TreeMap<Set<String>, Integer>(bvc);
+		TreeMap<Set<String>, Integer> sortedSupportMap = new TreeMap<>(bvc);
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(inputFile));
-			String line;
-			while((line = br.readLine()) != null)
-			{
-				String[] items = line.split(",");
-				List<String> transaction = new ArrayList<String>();
-				for(String i : items)
-				{
-					if(itemSupportMap.containsKey(i))
-					{
-						int newCount = (itemSupportMap.get(i))+1;
-						itemSupportMap.remove(i);
-						itemSupportMap.put(i, newCount);
-						itemSet.add(i);
-					}
-					else
-					{
-						itemSupportMap.put(i, 1);
-					}
-					transaction.add(i);
-				}
-				transactionList.add(transaction);
-			}
-			br.close();
+            try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+                String line;
+                while((line = br.readLine()) != null)
+                {
+                        String[] items = line.split(",");
+                        List<String> transaction = new ArrayList<>();
+                        for(String i : items)
+                        {
+                                if(itemSupportMap.containsKey(i))
+                                {
+                                        int newCount = (itemSupportMap.get(i))+1;
+                                        itemSupportMap.remove(i);
+                                        itemSupportMap.put(i, newCount);
+                                        itemSet.add(i);
+                                }
+                                else
+                                {
+                                        itemSupportMap.put(i, 1);
+                                }
+                                transaction.add(i);
+                        }
+                        transactionList.add(transaction);
+                }
+            }
 			
 			//Enter all level 0 large item sets in largeItemSetList
 			Iterator<Entry<String, Integer>> iterator = itemSupportMap.entrySet().iterator();
-			Set<String> temp = new HashSet<String>();
+			Set<String> temp = new HashSet<>();
 			while(iterator.hasNext())
 			{
 				Entry<String, Integer> entry = iterator.next();
@@ -83,17 +69,17 @@ public class AprioriMiner {
 					temp.add(key);
 				}
 			}
-			Set<Set<String>> setString = new HashSet<Set<String>>();
+			Set<Set<String>> setString = new HashSet<>();
 			setString.add(temp);
 			largeItemSetList.add(setString);
 			
 			int k = 1;
-			while(largeItemSetList.get(k-1).size() != 0)
+			while(!largeItemSetList.get(k-1).isEmpty())
 			{
-				Set<Set<String>> addToLargeItemSetList = new HashSet<Set<String>>(); //APRIORI-GEN---new candidates
-				ArrayList<String> entryList = new ArrayList<String>(65536);
-				ArrayList<Set<String>> preCkList = new ArrayList<Set<String>>(65536);
-				ArrayList<Set<String>> ckList = new ArrayList<Set<String>>(65536);
+				Set<Set<String>> addToLargeItemSetList = new HashSet<>(); //APRIORI-GEN---new candidates
+				ArrayList<String> entryList = new ArrayList<>(65536);
+				ArrayList<Set<String>> preCkList;
+				ArrayList<Set<String>> ckList = new ArrayList<>(65536);
 
 				Iterator<Set<String>> iterator3 = largeItemSetList.get(k-1).iterator();
 				while(iterator3.hasNext())
@@ -149,11 +135,11 @@ public class AprioriMiner {
 			Iterator<Set<String>> tempIter = tempSet.iterator();
 			Set<String> tempTempSet = tempIter.next();
 			Iterator<String> tempTempIter = tempTempSet.iterator();
-			Map<String, Integer> refMap = new HashMap<String, Integer>();
+			Map<String, Integer> refMap = new HashMap<>();
 			while(tempTempIter.hasNext())
 			{
 				String enterStringInSet = tempTempIter.next();
-				Set<String> newEntry = new HashSet<String>();
+				Set<String> newEntry = new HashSet<>();
 				newEntry.add(enterStringInSet);
 				Integer newEntryCount = -1;
 				
@@ -180,7 +166,7 @@ public class AprioriMiner {
 				while(innerIter.hasNext())
 				{
 					Set<String> keySet = innerIter.next();
-					Integer supportValue = 0;
+					Integer supportValue;
 					supportValue = getSupportCount(keySet);
 					largeItemSupportMap.put(keySet, supportValue);
 				}
@@ -188,7 +174,7 @@ public class AprioriMiner {
 
 			//generating confidences:
 			//get all rule possibilities in tempRuleList
-			List<Rule> tempRuleList = new ArrayList<Rule>();
+			List<Rule> tempRuleList = new ArrayList<>();
 			Iterator<Entry<Set<String>, Integer>> iter = largeItemSupportMap.entrySet().iterator();
 			while(iter.hasNext())
 			{
@@ -202,7 +188,7 @@ public class AprioriMiner {
 					Set<String> innerKey = (Set<String>)innerEntry.getKey();
 					Integer innerValue = (Integer)innerEntry.getValue();
 					
-					if(union(key, innerKey).size() != 0 && innerKey.size() == 1)
+					if(!union(key, innerKey).isEmpty() && innerKey.size() == 1)
 					{
 						Rule rule = new Rule(transactionList);
 						rule.setLhs(key);
@@ -233,6 +219,7 @@ public class AprioriMiner {
 			sortedSupportMap.putAll(largeItemSupportMap);
 			
 			Comparator<Rule> comparator = new Comparator<Rule>() {
+                @Override
 				public int compare(Rule o1, Rule o2) {
 					if(o1.confidence <= o2.confidence)
 						return 1;
@@ -243,40 +230,39 @@ public class AprioriMiner {
 			Collections.sort(ruleList, comparator);
 			
 			File outputFile = new File("output.txt");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
-			bw.write("Large ItemSets (decreasing order of support) :\n\n");
-			Iterator<Map.Entry<Set<String>, Integer>> finalItemSetIterator = sortedSupportMap.entrySet().iterator();
-			while(finalItemSetIterator.hasNext())
-			{
-				Entry<Set<String>, Integer> entry = finalItemSetIterator.next();
-				Set<String> key = entry.getKey();
-				Integer value = entry.getValue();
-				double support = (value / (double)transactionList.size()) * 100.0;
-				bw.write(Arrays.toString(key.toArray()) + ", " + support + "%\n");
-			}
-			bw.write("\n\nHigh-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) :\n\n");
-			for(int i = 0; i < ruleList.size(); i ++)
-			{
-				bw.write(ruleList.get(i) + "\n");
-			}
-			bw.close();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+                bw.write("Large ItemSets (decreasing order of support) :\n\n");
+                Iterator<Map.Entry<Set<String>, Integer>> finalItemSetIterator = sortedSupportMap.entrySet().iterator();
+                while(finalItemSetIterator.hasNext())
+                {
+                        Entry<Set<String>, Integer> entry = finalItemSetIterator.next();
+                        Set<String> key = entry.getKey();
+                        Integer value = entry.getValue();
+                        double support = (value / (double)transactionList.size()) * 100.0;
+                        bw.write(Arrays.toString(key.toArray()) + ", " + support + "%\n");
+                }
+                bw.write("\n\nHigh-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) :\n\n");
+                for(int i = 0; i < ruleList.size(); i ++)
+                {
+                        bw.write(ruleList.get(i) + "\n");
+                }
+            }
 		}
 		
 		catch(Exception e)
 		{
-			e.printStackTrace();
 		}
 	}
 	
 	private static ArrayList<Set<String>> getSubsets(ArrayList<String> set)
 	{
 
-		ArrayList<Set<String>> subsetCollection = new ArrayList<Set<String>>();
+		ArrayList<Set<String>> subsetCollection = new ArrayList<>();
 
-		if (set.size() == 0) {
+		if (set.isEmpty()) {
 			subsetCollection.add(new HashSet<String>());
 		} else {
-			ArrayList<String> reducedSet = new ArrayList<String>();
+			ArrayList<String> reducedSet = new ArrayList<>();
 
 			reducedSet.addAll(set);
 
@@ -297,7 +283,7 @@ public class AprioriMiner {
 	}
 	
 	public static <T>Set<T> union(Set<T> setA, Set<T> setB) {
-	    Set<T> tmp = new HashSet<T>(setA);
+	    Set<T> tmp = new HashSet<>(setA);
 	    tmp.addAll(setB);
 	    return tmp;
 	  }
@@ -324,13 +310,13 @@ class Rule
 	int rhsCount;
 	double confidence;
 	int support;
-	List<List<String>> transactionList = new ArrayList<List<String>>();
+	List<List<String>> transactionList = new ArrayList<>();
 	
 	Rule(List<List<String>> tl)
 	{
 		transactionList = tl;
-		lhs = new HashSet<String>();
-		rhs = new HashSet<String>();
+		lhs = new HashSet<>();
+		rhs = new HashSet<>();
 	}
 	
 	private int getSupportCount(Set<String> set)
@@ -392,7 +378,7 @@ class Rule
 	}
 	
 	public <T>Set<T> union(Set<T> setA, Set<T> setB) {
-	    Set<T> tmp = new HashSet<T>(setA);
+	    Set<T> tmp = new HashSet<>(setA);
 	    tmp.addAll(setB);
 	    return tmp;
 	  }
@@ -405,6 +391,7 @@ class ValueComparator implements Comparator<Set<String>> {
         this.base = base;
     }
 
+    @Override
     public int compare(Set<String> a, Set<String> b) {
         if (base.get(a) >= base.get(b)) {
             return -1;
