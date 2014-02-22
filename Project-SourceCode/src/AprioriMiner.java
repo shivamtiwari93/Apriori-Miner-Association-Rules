@@ -1,6 +1,10 @@
+//import required libraries
+
 import java.io.*;
 import java.util.Map.Entry;
 import java.util.*;
+
+//main class starts
 
 public class AprioriMiner {
 
@@ -8,31 +12,32 @@ public class AprioriMiner {
 	static List<Rule> ruleList = new ArrayList<>();
 	static List<Set<String>> largeItemList = new ArrayList<>();
 	
-	public static void main(String[] args) {
-
-		double minSupport = 0.20, minConfidence = 0.50;
-                
-                
-		String inputCsv = "C:\\Users\\Shivam Tiwari\\Documents\\NetBeansProjects\\Apriori-Miner-Association-Rules\\Project-SourceCode\\src\\INTEGRATED-DATASET.csv";
-                
-                /*
-		if(args.length > 0)
-			inputCsv = args[0];
-		if(args.length > 1)
-			minSupport = Double.parseDouble(args[1]);
-		if(args.length > 2)
-			minConfidence = Double.parseDouble(args[2]);
-		*/
+	//main function
+        public static void main(String[] args) {
+            
+            Scanner scanObj = new Scanner(System.in);
+            
+            System.out.println("Enter the address of the input file in CSV format");
+            String inputCsv = scanObj.nextLine();
+            
+            System.out.println("Enter the minimum support. Must be between 0 (exclusive) and 1(inclusive)");
+            double minSupport = scanObj.nextDouble();
+            
+            System.out.println("Enter the minimum confidence. Must be between 0 (exclusive) and 1(inclusive)");
+            double minConfidence = scanObj.nextDouble();
 		
-		File inputFile = new File(inputCsv);
-		List<Set<Set<String>>> largeItemSetList = new ArrayList<>();
+            File inputFile = new File(inputCsv);
+            List<Set<Set<String>>> largeItemSetList = new ArrayList<>();
 		
-		//Getting individual Items and their counts
+            //Getting individual Items and their counts
 		Set<String> itemSet = new HashSet<>();
 		Map<String,Integer> itemSupportMap = new HashMap<>();
 		Map<Set<String>,Integer> largeItemSupportMap = new HashMap<>();
 		ValueComparator bvc =  new ValueComparator(largeItemSupportMap);
 		TreeMap<Set<String>, Integer> sortedSupportMap = new TreeMap<>(bvc);
+                
+                System.out.println("Loading input file...");
+                
 		try
 		{
             try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
@@ -232,6 +237,8 @@ public class AprioriMiner {
 
 			Collections.sort(ruleList, comparator);
 			
+            System.out.println("Creating file named output.txt in source folder...");
+                        
 			File outputFile = new File("output.txt");
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
                 
@@ -274,6 +281,8 @@ public class AprioriMiner {
 		catch(IOException e)
 		{
 		}
+                
+                System.out.println("Terminating Execution.");
 	}
 	
 	private static ArrayList<Set<String>> getSubsets(ArrayList<String> set)
@@ -349,7 +358,7 @@ class Rule
 		{
 			if(transactionList.get(i).containsAll(set))
 			{
-				count ++;
+				count++;
 			}
 		}
 		return count;
