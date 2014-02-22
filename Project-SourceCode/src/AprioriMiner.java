@@ -10,15 +10,19 @@ public class AprioriMiner {
 	
 	public static void main(String[] args) {
 
-		double minSupport = 0, minConfidence = 0;
-		String inputCsv = "";
+		double minSupport = 2, minConfidence = 5;
+                
+                
+		String inputCsv = "C:\\Users\\Shivam Tiwari\\Documents\\NetBeansProjects\\Apriori-Miner-Association-Rules\\Project-SourceCode\\src\\INTEGRATED-DATASET.csv";
+                
+                /*
 		if(args.length > 0)
 			inputCsv = args[0];
 		if(args.length > 1)
 			minSupport = Double.parseDouble(args[1]);
 		if(args.length > 2)
 			minConfidence = Double.parseDouble(args[2]);
-		
+		*/
 		
 		File inputFile = new File(inputCsv);
 		List<Set<Set<String>>> largeItemSetList = new ArrayList<>();
@@ -108,7 +112,6 @@ public class AprioriMiner {
 					if(!largeItemSetList.get(k-1).containsAll(ckList.get(i)))
 					{
 						ckList.remove(i);
-						continue;
 					}
 				}
 				
@@ -231,6 +234,13 @@ public class AprioriMiner {
 			
 			File outputFile = new File("output.txt");
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+                
+
+                bw.write("Minimum Support : " + minSupport);
+                bw.write("\n");
+                bw.write("Minimum Confidence : " + minConfidence);
+                bw.write("\n");
+                
                 bw.write("Large ItemSets (decreasing order of support) :\n\n");
                 Iterator<Map.Entry<Set<String>, Integer>> finalItemSetIterator = sortedSupportMap.entrySet().iterator();
                 while(finalItemSetIterator.hasNext())
@@ -249,7 +259,7 @@ public class AprioriMiner {
             }
 		}
 		
-		catch(Exception e)
+		catch(IOException e)
 		{
 		}
 	}
@@ -267,7 +277,8 @@ public class AprioriMiner {
 			reducedSet.addAll(set);
 
 			String first = reducedSet.remove(0);
-			ArrayList<Set<String>> subsets = getSubsets(reducedSet);
+			ArrayList<Set<String>> subsets;
+                        subsets = getSubsets(reducedSet);
 			subsetCollection.addAll(subsets);
 
 			subsets = getSubsets(reducedSet);

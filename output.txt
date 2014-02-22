@@ -1,0 +1,8 @@
+Minimum Support : 2.0
+Minimum Confidence : 5.0
+Large ItemSets (decreasing order of support) :
+
+
+
+High-Confidence Rules (decreasing order of confidence) with support(LHS union RHS) :
+
